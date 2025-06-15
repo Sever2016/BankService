@@ -1,10 +1,6 @@
 package ru.start.bank.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 
 @Entity(name = "transactions")
 public class TransactionEntity {
@@ -19,15 +15,35 @@ public class TransactionEntity {
     @Column(name = "sum")
     private double sum;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getProductType() { return productType; }
-    public void setProductType(String productType) { this.productType = productType; }
+    public String getUserId() {
+        return userId;
+    }
 
-    public double getSum() { return sum; }
-    public void setSum(double sum) { this.sum = sum; }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
+    public double getSum() {
+        return sum;
+    }
+
+    public void setSum(double sum) {
+        this.sum = sum;
+    }
 }
