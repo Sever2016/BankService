@@ -8,6 +8,7 @@ import ru.start.bank.rule.RecommendationRuleSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class RecommendationService {
@@ -18,7 +19,7 @@ public class RecommendationService {
         this.ruleSets = ruleSets;
     }
 
-    public RecommendationResponse getRecommendations(String userId) {
+    public RecommendationResponse getRecommendations(UUID userId) {
         List<RecommendationDto> recommendations = new ArrayList<>();
 
         for (RecommendationRuleSet ruleSet : ruleSets) {

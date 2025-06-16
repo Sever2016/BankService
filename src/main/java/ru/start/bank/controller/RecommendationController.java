@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.start.bank.dto.RecommendationResponse;
 import ru.start.bank.service.RecommendationService;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/recommendations")
 public class RecommendationController {
@@ -19,7 +21,7 @@ public class RecommendationController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<RecommendationResponse> getRecommendations(@PathVariable String userId) {
+    public ResponseEntity<RecommendationResponse> getRecommendations(@PathVariable UUID userId) {
         var response = recommendationService.getRecommendations(userId);
         return ResponseEntity.ok(response);
     }
