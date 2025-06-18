@@ -20,6 +20,7 @@ public class RecommendationController {
         this.recommendationService = recommendationService;
     }
 
+
     @GetMapping("/{userId}")
     public ResponseEntity<RecommendationResponse> getRecommendations(@PathVariable UUID userId) {
         var response = recommendationService.getRecommendations(userId);

@@ -20,12 +20,15 @@ public class Invest500 implements RecommendationRuleSet {
     public Optional<RecommendationDto> check(UUID userId) {
         double totalDebitOperations = transactionRepository.getInformationAboutDebit(userId);
         double totalInvestOperations = transactionRepository.getInformationAboutInvest(userId);
-        Integer totalSavingDeposit = transactionRepository.getInformationAboutSaving(userId);
+        Integer totalSavingDeposit = transactionRepository.getInformationAboutSumDepositSaving(userId);
 
-        if (totalDebitOperations > 0 && totalInvestOperations < 0 && totalSavingDeposit != null && totalSavingDeposit > 1000) {
+        if (totalDebitOperations > 0
+                && totalInvestOperations == 0
+                && totalSavingDeposit != null
+                && totalSavingDeposit > 1000) {
             return Optional.of(new RecommendationDto(userId,
                     "Invest 500",
-                    "Откройте свой путь к успеху с индивидуальным инвестиционным счетом (ИИС) от нашего банка! Воспользуйтесь налоговыми льготами и начните инвестировать с умом. Пополните счет до конца года и получите выгоду в виде вычета на взнос в следующем налоговом периоде. Не упустите возможность разнообразить свой портфель, снизить риски и следить за актуальными рыночными тенденциями. Откройте ИИС сегодня и станьте ближе к финансовой независимости!"));
+                    "Откройте свой путь к успеху с индивидуальным инвестиционным счетом (ИИС) от нашего банка! ..."));
         }
         return Optional.empty();
     }

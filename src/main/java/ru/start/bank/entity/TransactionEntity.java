@@ -2,32 +2,34 @@ package ru.start.bank.entity;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 @Entity(name = "transactions")
 public class TransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
-    private String userId;
+    private UUID userId;
     private String productType;
 
     @Column(name = "sum")
     private double sum;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
