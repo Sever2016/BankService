@@ -1,16 +1,16 @@
 package ru.start.bank.rule;
 
 import ru.start.bank.dto.RecommendationDto;
-import ru.start.bank.repository.TransactionRepository2;
+import ru.start.bank.repository.TransactionRepository;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public class SimpleCredit implements RecommendationRuleSet {
 
-    private final TransactionRepository2 transactionRepository;
+    private final TransactionRepository transactionRepository;
 
-    public SimpleCredit(TransactionRepository2 transactionRepository) {
+    public SimpleCredit(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 

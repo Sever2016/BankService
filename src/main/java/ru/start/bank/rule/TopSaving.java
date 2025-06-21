@@ -3,7 +3,7 @@ package ru.start.bank.rule;
 
 import org.springframework.stereotype.Component;
 import ru.start.bank.dto.RecommendationDto;
-import ru.start.bank.repository.TransactionRepository2;
+import ru.start.bank.repository.TransactionRepository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -11,9 +11,9 @@ import java.util.UUID;
 @Component
 public class TopSaving implements RecommendationRuleSet {
 
-    private final TransactionRepository2 transactionRepository;
+    private final TransactionRepository transactionRepository;
 
-    public TopSaving(TransactionRepository2 transactionRepository) {
+    public TopSaving(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 

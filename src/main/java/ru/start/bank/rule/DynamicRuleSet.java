@@ -5,17 +5,17 @@ import ru.start.bank.dto.RecommendationDto;
 import ru.start.bank.entity.DynamicRecommendationQueryEntity;
 import ru.start.bank.entity.DynamicRecommendationRuleEntity;
 import ru.start.bank.repository.DynamicRuleRepository;
-import ru.start.bank.repository.TransactionRepository2;
+import ru.start.bank.repository.TransactionRepository;
 
 import java.util.List;
 import java.util.UUID;
 
 @Component
 public class DynamicRuleSet {
-    private final TransactionRepository2 transactionRepository;
+    private final TransactionRepository transactionRepository;
     private final DynamicRuleRepository dynamicRuleRepository;
 
-    public DynamicRuleSet(TransactionRepository2 transactionRepository, DynamicRuleRepository dynamicRuleRepository) {
+    public DynamicRuleSet(TransactionRepository transactionRepository, DynamicRuleRepository dynamicRuleRepository) {
         this.transactionRepository = transactionRepository;
         this.dynamicRuleRepository = dynamicRuleRepository;
     }
@@ -37,6 +37,8 @@ public class DynamicRuleSet {
 
                 }
             }
+
         }
+
     }
 }

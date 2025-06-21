@@ -16,8 +16,10 @@ public class DynamicRecommendationQueryEntity {
     @Enumerated(EnumType.STRING)
     private QueryType queryType;
 
+    @Column(name = "negate")//является пользователем или нет тру//фалс
     private boolean negate;
 
+    @Column(name = "arguments")
     private String arguments;
 
     @ManyToOne

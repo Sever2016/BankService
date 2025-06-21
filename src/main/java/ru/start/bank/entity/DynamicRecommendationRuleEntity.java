@@ -13,14 +13,17 @@ public class DynamicRecommendationRuleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column
+
+    @Column(name = "productName")
     private String productName;
-    @Column
+
+    @Column(name = "productId")
     private UUID productId;
+
     @Lob
     private String productText;
 
-    @OneToMany(mappedBy = "parentRule",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parentRule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DynamicRecommendationQueryEntity> queries = new ArrayList<>();
 
     public Long getId() {
