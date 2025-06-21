@@ -1,5 +1,7 @@
 package ru.start.bank.repository;
 
+
+import org.springframework.cache.annotation.Cacheable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,12 +11,12 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public class TransactionRepository2 {
+public class TransactionRepository {
     private final JdbcTemplate jdbcTemplate;
 
-    private static final Logger log = LoggerFactory.getLogger(TransactionRepository2.class);
+    private static final Logger log = LoggerFactory.getLogger(TransactionRepository.class);
 
-    public TransactionRepository2(@Qualifier("recommendationsJdbcTemplate") JdbcTemplate jdbcTemplate) {
+    public TransactionRepository(@Qualifier("recommendationsJdbcTemplate") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -78,8 +80,22 @@ public class TransactionRepository2 {
         return result;
     }
 
+    @Cacheable(value = "isUserOfCache", key = "#userId.toString() + ':' + #productType")
     public Boolean isUserOf(UUID userId, String productType) {
         String sql = "SELECT EXIST(SELECT 1 FROM TRANSACTION t LEFT JOIN PRODUCTS p ON t.PRODUCT_ID = p.ID" +
                 " WHERE t.USER_ID = ? AND p.TYPE = ?)";
-        return
+        Boolean result = jdbcTemplate.queryForObject(sql, Boolean.class, userId);
+        log.info("isUserOf {}: {}", userId, result);
+        return result;
     }
+
+    @Cacheable(value = "isActiveUserOfCache", key = "#userId.toString() + ':' #productType")
+    public boolean isActiveUserOf(UUID userId, String productType) {
+        String sql = "SELECT COUNT(t.ID)" +
+                "FROM TRANSACTION t" +
+                "INNER JOIN PRODUCTS p ON t.PRODUCT_ID = p.ID" +
+                "WHERE TYPE p.TYPE = ? AND t.USER_ID = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, productType, userId);
+        return count != null && count > 5;
+    }
+}

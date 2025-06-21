@@ -7,6 +7,7 @@ import ru.start.bank.entity.DynamicRecommendationRuleEntity;
 import ru.start.bank.repository.DynamicRuleRepository;
 import ru.start.bank.repository.TransactionRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,14 +22,24 @@ public class DynamicRuleSet {
     }
 
     public List<RecommendationDto> apply(UUID userId) {
+        List<RecommendationDto> recommendations = new ArrayList<>();
         List<DynamicRecommendationRuleEntity> rules = dynamicRuleRepository.findAll();
+
         for (DynamicRecommendationRuleEntity rule : rules) {
-            List<DynamicRecommendationQueryEntity> queries = rule.getQueries();
-            for (DynamicRecommendationQueryEntity query : queries) {
-                switch (query.getQueryType()){
-                    case USER_OF -> {transactionRepository.isUserOf(userId,query.getParsedArguments().get(0));
+            boolean isRuleValid = true;
+
+            for (DynamicRecommendationQueryEntity query : rule.getQueries()) {
+                boolean result = false;
+
+                switch (query.getQueryType()) {
+                    case USER_OF -> {
+                        String productType = query.getParsedArguments().get(0);
+                        result = transactionRepository.isUserOf(userId, query.getParsedArguments().get(0));
                     }
                     case ACTIVE_USER_OF -> {
+                        String productType =;
+                        result = ;
+
                     }
                     case TRANSACTION_SUM_COMPARE -> {
                     }
