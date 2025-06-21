@@ -34,11 +34,11 @@ public class DynamicRuleSet {
                 switch (query.getQueryType()) {
                     case USER_OF -> {
                         String productType = query.getParsedArguments().get(0);
-                        result = transactionRepository.isUserOf(userId, query.getParsedArguments().get(0));
+                        result = transactionRepository.isUserOf(userId,productType);
                     }
                     case ACTIVE_USER_OF -> {
-                        String productType =;
-                        result = ;
+                        String productType =query.getParsedArguments().get(0);
+                        result = transactionRepository.isActiveUserOf(userId,productType);
 
                     }
                     case TRANSACTION_SUM_COMPARE -> {
