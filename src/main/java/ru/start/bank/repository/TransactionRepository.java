@@ -98,4 +98,54 @@ public class TransactionRepository {
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, productType, userId);
         return count != null && count > 5;
     }
+
+    @Cacheable(value = "transactionSumCompareCache",
+            key = "#userId.toString() + ':' #productType + ':' #transactionType + ':' + #operator + ':' + #value")
+    public boolean transactionSumCompare(UUID userId, String productType, String transactionType, String operator, int value) {
+        String sql = "SELECT COALESCE(SUM(t.AMOUNT),0)" +
+                "FROM TRANSACTION t" +
+                "INNER JOIN PRODUCTS p ON t.PRODUCT_ID = p.ID" +
+                "WHERE TYPE p.TYPE = ? AND t.TYPE = ? AND t.USER_ID = ?";
+        Integer sum = jdbcTemplate.queryForObject(sql, Integer.class, productType, transactionType, userId);
+        if (sum == null) sum = 0;
+
+        return switch (operator) {
+            case ">" -> sum > value;
+            case "<" -> sum < value;
+            case "=" -> sum == value;
+            case ">=" -> sum >= value;
+            case "<=" -> sum <= value;
+            default -> false;
+        };
+    }
+
+    @Cacheable(value = "transactionSumCompareDepositWithdrawCache",
+            key = "#userId.toString() + ':' #productType + ':' + #operator")
+    public boolean transactionSumCompareDepositWithdraw(UUID userId, String productType, String operator) {
+        String depositSql = "SELECT COALESCE(SUM(t.AMOUNT),0)" +
+                "FROM TRANSACTION t" +
+                "INNER JOIN PRODUCT p on t.PRODUCT_ID = p.ID" +
+                "WHERE TYPE p.TYPE = ? AND and t.TYPE = 'DEPOSIT' AND t.USER_ID = ?";
+        Integer depositSum = jdbcTemplate.queryForObject(depositSql, Integer.class, productType, userId);
+
+        String withdrawSql = "SELECT COALESCE(SUM(t.AMOUNT),0)" +
+                "FROM TRANSACTION t" +
+                "INNER JOIN PRODUCT p on t.PRODUCT_ID = p.ID" +
+                "WHERE TYPE p.TYPE = ? AND and t.TYPE = 'WITHDRAW' AND t.USER_ID = ?";
+        Integer withdrawSum = jdbcTemplate.queryForObject(withdrawSql, Integer.class, productType, userId);
+
+        if (depositSum == null) depositSum = 0;
+        if (withdrawSum == null) withdrawSum = 0;
+
+        return switch (operator) {
+            case ">" -> depositSum > withdrawSum;
+            case "<" -> depositSum < withdrawSum;
+            case "=" -> depositSum.equals(withdrawSum);
+            case ">=" -> depositSum >= withdrawSum;
+            case "<=" -> depositSum <= withdrawSum;
+            default -> false;
+        };
+
+
+    }
 }

@@ -12,10 +12,10 @@ public class DynamicRecommendationRuleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private UUID id;
 
-    @Column(name = "productName")
-    private String productName;
+    @Column(name = "Name")
+    private String Name;
 
     @Column(name = "productId")
     private UUID productId;
@@ -26,20 +26,20 @@ public class DynamicRecommendationRuleEntity {
     @OneToMany(mappedBy = "parentRule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DynamicRecommendationQueryEntity> queries = new ArrayList<>();
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getName() {
+        return Name;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setName(String name) {
+        this.Name = name;
     }
 
     public UUID getProductId() {
