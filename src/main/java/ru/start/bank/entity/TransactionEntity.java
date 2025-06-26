@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.UUID;
 
-@Entity(name = "transactions")
+//@Entity(name = "transactions")
 public class TransactionEntity {
 
     @Id

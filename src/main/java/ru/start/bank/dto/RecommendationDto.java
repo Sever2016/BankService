@@ -16,9 +16,6 @@ public class RecommendationDto {
         this.text = text;
     }
 
-    public UUID getId() {
-        return id;
-    }
 
     public void setId(UUID id) {
         this.id = id;

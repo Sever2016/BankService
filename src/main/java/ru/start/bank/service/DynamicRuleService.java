@@ -1,6 +1,8 @@
 package ru.start.bank.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import ru.start.bank.dto.RecommendationDto;
 import ru.start.bank.entity.DynamicRecommendationRuleEntity;
 import ru.start.bank.repository.DynamicRuleRepository;
 
@@ -21,12 +23,31 @@ public class DynamicRuleService {
         return dynamicRuleRepository.findAll();
     }
 
-    public DynamicRecommendationRuleEntity addRule(DynamicRecommendationRuleEntity rule) {
-        return dynamicRuleRepository.save(rule);
+    @Transactional
+    public RecommendationDto addRule(RecommendationDto dto) {
+        DynamicRecommendationRuleEntity entity = new DynamicRecommendationRuleEntity();
+        entity.setName(dto.getName());
+        entity.setProductText(dto.getText());
+        entity.setProductId(UUID.randomUUID());
+
+        DynamicRecommendationRuleEntity saved = dynamicRuleRepository.save(entity);
+        return new RecommendationDto(saved.getId(), saved.getName(), saved.getProductText());
     }
+
 
     public void deleteRule(UUID productId) {
         dynamicRuleRepository.deleteByProductId(productId);
+    }
+
+    private DynamicRecommendationRuleEntity mapToEntity(RecommendationDto dto) {
+        DynamicRecommendationRuleEntity entity = new DynamicRecommendationRuleEntity();
+        entity.setName(dto.getName());
+        entity.setProductText(dto.getText());
+        return entity;
+    }
+
+    private RecommendationDto mapToDto(DynamicRecommendationRuleEntity entity) {
+        return new RecommendationDto(entity.getId(), entity.getName(), entity.getProductText());
     }
 
 }

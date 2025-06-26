@@ -1,35 +1,39 @@
 package ru.start.bank.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 import ru.start.bank.dto.QueryType;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
-@Table
+@Table(name = "dynamic_recommendation_query")
 public class DynamicRecommendationQueryEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     private QueryType queryType;
 
-    @Column(name = "negate")//является пользователем или нет тру//фалс
-    private boolean negate;
-
     @Column(name = "arguments")
     private String arguments;
 
+    @Column(name = "negate")//является пользователем или нет тру//фалс
+    private boolean negate;
+
     @ManyToOne
+    @JoinColumn(name = "rule_id", nullable = false)
     private DynamicRecommendationRuleEntity parentRule;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

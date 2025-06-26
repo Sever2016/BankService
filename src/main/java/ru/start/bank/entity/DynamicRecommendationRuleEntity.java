@@ -1,6 +1,7 @@
 package ru.start.bank.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +11,15 @@ import java.util.UUID;
 @Table(name = "dynamic_recommendation_rule")
 public class DynamicRecommendationRuleEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "Name")
-    private String Name;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "productId")
+    @Column(name = "product_id")
     private UUID productId;
 
     @Lob
@@ -35,11 +37,11 @@ public class DynamicRecommendationRuleEntity {
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        this.Name = name;
+        this.name = name;
     }
 
     public UUID getProductId() {
