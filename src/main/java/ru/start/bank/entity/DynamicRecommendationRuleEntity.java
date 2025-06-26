@@ -22,7 +22,9 @@ public class DynamicRecommendationRuleEntity {
     @Column(name = "product_id")
     private UUID productId;
 
-    @Lob
+//    @Lob
+    @Column(columnDefinition = "TEXT")
+//    @Type(type = "org.hibernate.type.TextType")
     private String productText;
 
     @OneToMany(mappedBy = "parentRule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

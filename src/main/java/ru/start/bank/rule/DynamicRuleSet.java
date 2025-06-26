@@ -9,10 +9,11 @@ import ru.start.bank.repository.TransactionRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class DynamicRuleSet {
+public class DynamicRuleSet implements RecommendationRuleSet{
     private final TransactionRepository transactionRepository;
     private final DynamicRuleRepository dynamicRuleRepository;
 
@@ -50,7 +51,7 @@ public class DynamicRuleSet {
                     }
                     case TRANSACTION_SUM_COMPARE_DEPOSIT_WITHDRAW -> {
                         String productType = query.getParsedArguments().get(0);
-                        String operator = query.getParsedArguments().get(0);
+                        String operator = query.getParsedArguments().get(1);
                         result = transactionRepository.transactionSumCompareDepositWithdraw(userId, productType, operator);
                     }
                 }
@@ -69,5 +70,10 @@ public class DynamicRuleSet {
             }
         }
         return recommendations;
+    }
+
+    @Override
+    public Optional<RecommendationDto> check(UUID userId) {
+        return Optional.empty();
     }
 }

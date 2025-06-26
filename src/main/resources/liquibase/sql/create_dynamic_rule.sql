@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 --changeset romarsh:2
 CREATE TABLE dynamic_recommendation_rule (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     product_id UUID NOT NULL,
     product_text TEXT NOT NULL
@@ -13,7 +13,7 @@ CREATE TABLE dynamic_recommendation_rule (
 
 --changeset romarsh:3
 CREATE TABLE dynamic_recommendation_query (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,
     query_type VARCHAR(100) NOT NULL,
     arguments TEXT NOT NULL, -- Храним JSON-массив строк, например '["CREDIT"]'
     negate BOOLEAN NOT NULL,
