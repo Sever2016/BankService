@@ -1,0 +1,20 @@
+=== Диаграмма компонентов
+
+component [DynamicRecommendationController] as DRC
+component [DynamicRuleService] as DRSER
+component [DynamicRuleRepository] as DRR
+component [DynamicQueryRepository] as DQR
+component [TransactionRepository] as TR
+component [DynamicRuleSet] as DRSET
+database "Transaction Database" as TDB
+database "Dynamic Rule Database" as DRDB
+HTTP --> DRC
+DRC --> DRSER
+DRSER --> DRSET
+DRSER --> DRR
+DRSER --> DQR
+DRSET --> DRR
+DRSET --> TR
+TR --> TDB
+DRR --> DRDB
+DQR --> DRDB
