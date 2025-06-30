@@ -1,5 +1,6 @@
 package ru.start.bank.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 import ru.start.bank.dto.QueryType;
@@ -10,6 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "dynamic_recommendation_query")
 public class DynamicRecommendationQueryEntity {
+    @JsonIgnore
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -20,14 +22,25 @@ public class DynamicRecommendationQueryEntity {
     private QueryType queryType;
 
     @Column(name = "arguments")
-    private String arguments;
+    private List<String> arguments;
 
     @Column(name = "negate")//является пользователем или нет тру//фалс
     private boolean negate;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "rule_id", nullable = false)
+    @JoinColumn(name = "dynamic_recommendation_rule_id")
     private DynamicRecommendationRuleEntity parentRule;
+
+    public DynamicRecommendationQueryEntity() {
+    }
+
+    public DynamicRecommendationQueryEntity(UUID id, QueryType queryType, List<String> arguments, boolean negate) {
+        this.id = id;
+        this.queryType = queryType;
+        this.arguments = arguments;
+        this.negate = negate;
+    }
 
     public UUID getId() {
         return id;
@@ -53,11 +66,11 @@ public class DynamicRecommendationQueryEntity {
         this.negate = negate;
     }
 
-    public String getArguments() {
+    public List<String> getArguments() {
         return arguments;
     }
 
-    public void setArguments(String arguments) {
+    public void setArguments(List<String> arguments) {
         this.arguments = arguments;
     }
 
@@ -67,13 +80,5 @@ public class DynamicRecommendationQueryEntity {
 
     public void setParentRule(DynamicRecommendationRuleEntity parentRule) {
         this.parentRule = parentRule;
-    }
-
-    public List<String> getParsedArguments() {
-        return List.of(arguments.split(","));
-    }
-
-    public void setParsedArguments(List<String> args) {
-        this.arguments = String.join(",", args);
     }
 }

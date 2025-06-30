@@ -3,50 +3,56 @@ package ru.start.bank.service;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ru.start.bank.dto.RecommendationDto;
+import ru.start.bank.dto.RecommendationResponse;
+import ru.start.bank.entity.DynamicRecommendationQueryEntity;
 import ru.start.bank.entity.DynamicRecommendationRuleEntity;
+import ru.start.bank.repository.DynamicQueryRepository;
 import ru.start.bank.repository.DynamicRuleRepository;
+import ru.start.bank.rule.DynamicRuleSet;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class DynamicRuleService {
 
-    public DynamicRuleService(DynamicRuleRepository dynamicRuleRepository) {
+    public DynamicRuleService(DynamicRuleRepository dynamicRuleRepository, DynamicQueryRepository dynamicQueryRepository, DynamicRuleSet dynamicRuleSet) {
         this.dynamicRuleRepository = dynamicRuleRepository;
+        this.dynamicQueryRepository = dynamicQueryRepository;
+        this.dynamicRuleSet = dynamicRuleSet;
     }
 
+    private final DynamicQueryRepository dynamicQueryRepository;
     private final DynamicRuleRepository dynamicRuleRepository;
+    private final DynamicRuleSet dynamicRuleSet;
 
-
-    public List<RecommendationDto> getAllRules() {
-        return dynamicRuleRepository.findAll().stream()
-                .map(entity -> new RecommendationDto(
-                        entity.getProductId(),
-                        entity.getName(),
-                        entity.getProductText()
-                ))
-                .collect(Collectors.toList());
+    public List<DynamicRecommendationRuleEntity> getAllRules() {
+        return dynamicRuleRepository.findAll();
     }
 
     @Transactional
-    public RecommendationDto addRule(RecommendationDto dto) {
-        System.out.println(">>> dto.getText(): " + dto.getText());
-
-        DynamicRecommendationRuleEntity entity = new DynamicRecommendationRuleEntity();
-        entity.setName(dto.getName());
-        entity.setProductText(dto.getText());
-        entity.setProductId(UUID.randomUUID());
-
-        DynamicRecommendationRuleEntity saved = dynamicRuleRepository.save(entity);
-        System.out.println(">>> saved.getProductText(): " + saved.getProductText());
-        return new RecommendationDto(saved.getId(), saved.getName(), saved.getProductText());
+    public DynamicRecommendationRuleEntity addRule(DynamicRecommendationRuleEntity dynamicRecommendationRuleEntity) {
+        for (DynamicRecommendationQueryEntity dynamicRecommendationQueryEntity : (dynamicRecommendationRuleEntity.getQueries())) {
+            DynamicRecommendationQueryEntity newDynamicRecommendationQueryEntity = new DynamicRecommendationQueryEntity();
+            newDynamicRecommendationQueryEntity.setParentRule(dynamicRecommendationRuleEntity);
+            newDynamicRecommendationQueryEntity.setArguments(dynamicRecommendationQueryEntity.getArguments());
+            newDynamicRecommendationQueryEntity.setQueryType(dynamicRecommendationQueryEntity.getQueryType());
+            newDynamicRecommendationQueryEntity.setNegate(dynamicRecommendationQueryEntity.isNegate());
+            dynamicQueryRepository.save(newDynamicRecommendationQueryEntity);
+        }
+        return dynamicRuleRepository.save(dynamicRecommendationRuleEntity);
     }
 
     @Transactional
     public void deleteRule(UUID productId) {
+        DynamicRecommendationRuleEntity dynamicRecommendationRuleEntity = dynamicRuleRepository.findByProductId(productId);
+        dynamicQueryRepository.deleteByDynamicRecommendationRuleId(dynamicRecommendationRuleEntity.getId());
         dynamicRuleRepository.deleteByProductId(productId);
+    }
+
+    public RecommendationResponse getRecommendations(UUID userId) {
+        List<RecommendationDto> recommendations = dynamicRuleSet.apply(userId);
+        return new RecommendationResponse(userId, recommendations);
     }
 
 }

@@ -3,7 +3,6 @@ package ru.start.bank.entity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,18 +16,27 @@ public class DynamicRecommendationRuleEntity {
     private UUID id;
 
     @Column(name = "name")
-    private String name;
+    private String productName;
 
     @Column(name = "product_id")
     private UUID productId;
 
-//    @Lob
     @Column(columnDefinition = "TEXT")
-//    @Type(type = "org.hibernate.type.TextType")
     private String productText;
 
-    @OneToMany(mappedBy = "parentRule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<DynamicRecommendationQueryEntity> queries = new ArrayList<>();
+    @OneToMany(mappedBy = "parentRule")
+    private List<DynamicRecommendationQueryEntity> queries;
+
+    public DynamicRecommendationRuleEntity() {
+    }
+
+    public DynamicRecommendationRuleEntity(UUID id, String productName, UUID productId, String productText, List<DynamicRecommendationQueryEntity> queries) {
+        this.id = id;
+        this.productName = productName;
+        this.productId = productId;
+        this.productText = productText;
+        this.queries = queries;
+    }
 
     public UUID getId() {
         return id;
@@ -38,12 +46,12 @@ public class DynamicRecommendationRuleEntity {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public UUID getProductId() {

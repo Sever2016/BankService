@@ -72,7 +72,7 @@ public class TransactionRepository {
 
     public Integer getInformationAboutCredit(UUID userId) {
         String sql = "SELECT COUNT(t.PRODUCT_ID) " +
-                "FROM TRANSACTION t " +
+                "FROM TRANSACTIONS t " +
                 "INNER JOIN PRODUCTS p ON t.PRODUCT_ID = p.ID " +
                 "WHERE p.TYPE = 'CREDIT' AND t.USER_ID = ? ";
         Integer result = jdbcTemplate.queryForObject(sql, Integer.class, userId);
@@ -82,9 +82,9 @@ public class TransactionRepository {
 
     @Cacheable(value = "isUserOfCache", key = "#userId.toString() + ':' + #productType")
     public Boolean isUserOf(UUID userId, String productType) {
-        String sql = "SELECT EXIST(SELECT 1 FROM TRANSACTION t LEFT JOIN PRODUCTS p ON t.PRODUCT_ID = p.ID" +
+        String sql = "SELECT EXIST(SELECT 1 FROM TRANSACTIONS t LEFT JOIN PRODUCTS p ON t.PRODUCT_ID = p.ID" +
                 " WHERE t.USER_ID = ? AND p.TYPE = ?)";
-        Boolean result = jdbcTemplate.queryForObject(sql, Boolean.class, userId);
+        Boolean result = jdbcTemplate.queryForObject(sql, Boolean.class, userId, productType);
         log.info("isUserOf {}: {}", userId, result);
         return result;
     }
@@ -92,7 +92,7 @@ public class TransactionRepository {
     @Cacheable(value = "isActiveUserOfCache", key = "#userId.toString() + ':' #productType")
     public boolean isActiveUserOf(UUID userId, String productType) {
         String sql = "SELECT COUNT(t.ID)" +
-                "FROM TRANSACTION t" +
+                "FROM TRANSACTIONS t" +
                 "INNER JOIN PRODUCTS p ON t.PRODUCT_ID = p.ID" +
                 "WHERE TYPE p.TYPE = ? AND t.USER_ID = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, productType, userId);
@@ -103,7 +103,7 @@ public class TransactionRepository {
             key = "#userId.toString() + ':' #productType + ':' #transactionType + ':' + #operator + ':' + #value")
     public boolean transactionSumCompare(UUID userId, String productType, String transactionType, String operator, int value) {
         String sql = "SELECT COALESCE(SUM(t.AMOUNT),0)" +
-                "FROM TRANSACTION t" +
+                "FROM TRANSACTIONS t" +
                 "INNER JOIN PRODUCTS p ON t.PRODUCT_ID = p.ID" +
                 "WHERE TYPE p.TYPE = ? AND t.TYPE = ? AND t.USER_ID = ?";
         Integer sum = jdbcTemplate.queryForObject(sql, Integer.class, productType, transactionType, userId);
@@ -123,14 +123,14 @@ public class TransactionRepository {
             key = "#userId.toString() + ':' #productType + ':' + #operator")
     public boolean transactionSumCompareDepositWithdraw(UUID userId, String productType, String operator) {
         String depositSql = "SELECT COALESCE(SUM(t.AMOUNT),0)" +
-                "FROM TRANSACTION t" +
-                "INNER JOIN PRODUCT p on t.PRODUCT_ID = p.ID" +
+                "FROM TRANSACTIONS t" +
+                "INNER JOIN PRODUCTS p on t.PRODUCT_ID = p.ID" +
                 "WHERE TYPE p.TYPE = ? AND and t.TYPE = 'DEPOSIT' AND t.USER_ID = ?";
         Integer depositSum = jdbcTemplate.queryForObject(depositSql, Integer.class, productType, userId);
 
         String withdrawSql = "SELECT COALESCE(SUM(t.AMOUNT),0)" +
-                "FROM TRANSACTION t" +
-                "INNER JOIN PRODUCT p on t.PRODUCT_ID = p.ID" +
+                "FROM TRANSACTIONS t" +
+                "INNER JOIN PRODUCTS p on t.PRODUCT_ID = p.ID" +
                 "WHERE TYPE p.TYPE = ? AND and t.TYPE = 'WITHDRAW' AND t.USER_ID = ?";
         Integer withdrawSum = jdbcTemplate.queryForObject(withdrawSql, Integer.class, productType, userId);
 
