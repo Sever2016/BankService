@@ -1,4 +1,4 @@
-package ru.start.bank.service;
+package ru.start.bank.TelegramBot;
 
 
 import com.pengrad.telegrambot.TelegramBot;
@@ -9,28 +9,33 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.start.bank.dto.RecommendationDto;
 import ru.start.bank.dto.RecommendationResponse;
 import ru.start.bank.entity.UserEntity;
 import ru.start.bank.repository.UserRepository;
+import ru.start.bank.service.RecommendationService;
 
 
 import java.util.List;
 
-@Service
+@Component
 public class TelegramListenerService implements UpdatesListener {
 
     private static final Logger logger = LoggerFactory.getLogger(TelegramListenerService.class);
 
-    @Autowired
-    private TelegramBot telegramBot;
+    private final TelegramBot telegramBot;
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    RecommendationService recommendationService;
+   private final RecommendationService recommendationService;
+
+    public TelegramListenerService(TelegramBot telegramBot, UserRepository userRepository, RecommendationService recommendationService) {
+        this.telegramBot = telegramBot;
+        this.userRepository = userRepository;
+        this.recommendationService = recommendationService;
+    }
 
     @PostConstruct
     public void init() {
@@ -57,7 +62,6 @@ public class TelegramListenerService implements UpdatesListener {
                     } else {
                         String username = parts[1];
                         processRecommendation(chatId, username);
-//                        sendMessage(chatId, "Ищу рекомендации для пользователя: " + username);
                     }
                 }
             }

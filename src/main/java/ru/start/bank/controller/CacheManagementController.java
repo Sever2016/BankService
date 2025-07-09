@@ -1,4 +1,4 @@
-package ru.start.bank.configuration;
+package ru.start.bank.controller;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
