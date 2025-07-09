@@ -9,4 +9,5 @@ import java.util.UUID;
 @Repository
 public interface DynamicRuleRepository extends JpaRepository<DynamicRecommendationRuleEntity, Long> {
     void deleteByProductId(UUID productId);
+    DynamicRecommendationRuleEntity findByProductId(UUID productId);
 }

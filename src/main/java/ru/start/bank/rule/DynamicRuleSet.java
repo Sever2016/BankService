@@ -34,25 +34,25 @@ public class DynamicRuleSet implements RecommendationRuleSet{
 
                 switch (query.getQueryType()) {
                     case USER_OF -> {
-                        String productType = query.getParsedArguments().get(0);
-                        result = transactionRepository.isUserOf(userId, productType);
+                        String productType = query.getArguments().get(0);
+                        result = query.isNegate() != transactionRepository.isUserOf(userId, productType);
                     }
                     case ACTIVE_USER_OF -> {
-                        String productType = query.getParsedArguments().get(0);
-                        result = transactionRepository.isActiveUserOf(userId, productType);
+                        String productType = query.getArguments().get(0);
+                        result = query.isNegate() != transactionRepository.isActiveUserOf(userId, productType);
 
                     }
                     case TRANSACTION_SUM_COMPARE -> {
-                        String productType = query.getParsedArguments().get(0);
-                        String transactionType = query.getParsedArguments().get(1);
-                        String operator = query.getParsedArguments().get(2);
-                        int value = Integer.parseInt(query.getParsedArguments().get(3));
-                        result = transactionRepository.transactionSumCompare(userId, productType, transactionType, operator, value);
+                        String productType = query.getArguments().get(0);
+                        String transactionType = query.getArguments().get(1);
+                        String operator = query.getArguments().get(2);
+                        int value = Integer.parseInt(query.getArguments().get(3));
+                        result = query.isNegate() != transactionRepository.transactionSumCompare(userId, productType, transactionType, operator, value);
                     }
                     case TRANSACTION_SUM_COMPARE_DEPOSIT_WITHDRAW -> {
-                        String productType = query.getParsedArguments().get(0);
-                        String operator = query.getParsedArguments().get(1);
-                        result = transactionRepository.transactionSumCompareDepositWithdraw(userId, productType, operator);
+                        String productType = query.getArguments().get(0);
+                        String operator = query.getArguments().get(1);
+                        result = query.isNegate() != transactionRepository.transactionSumCompareDepositWithdraw(userId, productType, operator);
                     }
                 }
 
@@ -64,7 +64,7 @@ public class DynamicRuleSet implements RecommendationRuleSet{
             if (isRuleValid) {
                 RecommendationDto recommendation = new RecommendationDto();
                 recommendation.setId(rule.getId());
-                recommendation.setName(rule.getName());
+                recommendation.setName(rule.getProductName());
                 recommendation.setText(rule.getProductText());
                 recommendations.add(recommendation);
             }

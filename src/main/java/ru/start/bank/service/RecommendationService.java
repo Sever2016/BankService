@@ -12,11 +12,12 @@ import java.util.UUID;
 
 @Service
 public class RecommendationService {
-
     private final List<RecommendationRuleSet> ruleSets;
+    private final RuleStatsService ruleStatsService;
 
-    public RecommendationService(List<RecommendationRuleSet> ruleSets) {
+    public RecommendationService(List<RecommendationRuleSet> ruleSets, RuleStatsService ruleStatsService) {
         this.ruleSets = ruleSets;
+        this.ruleStatsService = ruleStatsService;
     }
 
     public RecommendationResponse getRecommendations(UUID userId) {
@@ -24,7 +25,10 @@ public class RecommendationService {
 
         for (RecommendationRuleSet ruleSet : ruleSets) {
             Optional<RecommendationDto> recOpt = ruleSet.check(userId);
-            recOpt.ifPresent(recommendations::add);
+            recOpt.ifPresent(rec -> {
+                recommendations.add(rec);
+                ruleStatsService.incrementRuleCounter(rec.getId());
+            });
         }
 
         return new RecommendationResponse(userId, recommendations);
