@@ -6,6 +6,7 @@ import ru.start.bank.entity.DynamicRecommendationQueryEntity;
 import ru.start.bank.entity.DynamicRecommendationRuleEntity;
 import ru.start.bank.repository.DynamicRuleRepository;
 import ru.start.bank.repository.TransactionRepository;
+import ru.start.bank.service.RuleStatsService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +17,12 @@ import java.util.UUID;
 public class DynamicRuleSet implements RecommendationRuleSet{
     private final TransactionRepository transactionRepository;
     private final DynamicRuleRepository dynamicRuleRepository;
+    private final RuleStatsService ruleStatsService;
 
-    public DynamicRuleSet(TransactionRepository transactionRepository, DynamicRuleRepository dynamicRuleRepository) {
+    public DynamicRuleSet(TransactionRepository transactionRepository, DynamicRuleRepository dynamicRuleRepository, RuleStatsService ruleStatsService) {
         this.transactionRepository = transactionRepository;
         this.dynamicRuleRepository = dynamicRuleRepository;
+        this.ruleStatsService = ruleStatsService;
     }
 
     public List<RecommendationDto> apply(UUID userId) {
@@ -67,6 +70,7 @@ public class DynamicRuleSet implements RecommendationRuleSet{
                 recommendation.setName(rule.getProductName());
                 recommendation.setText(rule.getProductText());
                 recommendations.add(recommendation);
+                ruleStatsService.incrementRuleCounter(rule.getId());
             }
         }
         return recommendations;
