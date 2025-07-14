@@ -8,14 +8,12 @@ import com.pengrad.telegrambot.request.SendMessage;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import ru.start.bank.dto.RecommendationDto;
 import ru.start.bank.dto.RecommendationResponse;
 import ru.start.bank.entity.UserEntity;
 import ru.start.bank.repository.UserRepository;
-import ru.start.bank.service.RecommendationService;
+import ru.start.bank.service.DynamicRuleService;
 
 
 import java.util.List;
@@ -29,9 +27,9 @@ public class TelegramListenerService implements UpdatesListener {
 
     private final UserRepository userRepository;
 
-   private final RecommendationService recommendationService;
+   private final DynamicRuleService recommendationService;
 
-    public TelegramListenerService(TelegramBot telegramBot, UserRepository userRepository, RecommendationService recommendationService) {
+    public TelegramListenerService(TelegramBot telegramBot, UserRepository userRepository, DynamicRuleService recommendationService) {
         this.telegramBot = telegramBot;
         this.userRepository = userRepository;
         this.recommendationService = recommendationService;

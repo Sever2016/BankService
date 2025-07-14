@@ -9,22 +9,28 @@ import ru.start.bank.entity.DynamicRecommendationRuleEntity;
 import ru.start.bank.repository.DynamicQueryRepository;
 import ru.start.bank.repository.DynamicRuleRepository;
 import ru.start.bank.rule.DynamicRuleSet;
+import ru.start.bank.rule.RecommendationRuleSet;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class DynamicRuleService {
 
-    public DynamicRuleService(DynamicRuleRepository dynamicRuleRepository, DynamicQueryRepository dynamicQueryRepository, DynamicRuleSet dynamicRuleSet) {
+    public DynamicRuleService(List<RecommendationRuleSet> ruleSets, DynamicRuleRepository dynamicRuleRepository, DynamicQueryRepository dynamicQueryRepository, DynamicRuleSet dynamicRuleSet, RuleStatsService ruleStatsService) {
         this.dynamicRuleRepository = dynamicRuleRepository;
         this.dynamicQueryRepository = dynamicQueryRepository;
         this.dynamicRuleSet = dynamicRuleSet;
+        this.ruleStatsService = ruleStatsService;
+        this.ruleSets = ruleSets;
     }
 
     private final DynamicQueryRepository dynamicQueryRepository;
     private final DynamicRuleRepository dynamicRuleRepository;
     private final DynamicRuleSet dynamicRuleSet;
+    private final RuleStatsService ruleStatsService;
+    private final List<RecommendationRuleSet> ruleSets;
 
     public List<DynamicRecommendationRuleEntity> getAllRules() {
         return dynamicRuleRepository.findAll();
@@ -52,6 +58,15 @@ public class DynamicRuleService {
 
     public RecommendationResponse getRecommendations(UUID userId) {
         List<RecommendationDto> recommendations = dynamicRuleSet.apply(userId);
+
+        for (RecommendationRuleSet ruleSet : ruleSets) {
+            Optional<RecommendationDto> recOpt = ruleSet.check(userId);
+            recOpt.ifPresent(rec -> {
+                recommendations.add(rec);
+                ruleStatsService.incrementRuleCounter(rec.getId());
+            });
+        }
+
         return new RecommendationResponse(userId, recommendations);
     }
 
